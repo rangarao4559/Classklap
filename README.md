@@ -1,4 +1,6 @@
 <aura:component controller="SPOModuleController" implements="lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader,force:appHostable,lightning:isUrlAddressable" access="global" >
+
+
     <aura:attribute name="adddata" type="String" />
    <aura:attribute name="accountMap" type="Map"/>
     <ltng:require scripts="{!$Resource.UtilityFiles}" afterScriptsLoaded="{!c.scriptsLoaded}"/>
