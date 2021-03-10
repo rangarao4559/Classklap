@@ -1,1 +1,39 @@
-ji
+<aura:component controller="CurrentUserController" implements="lightning:actionOverride,force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" access = "global">
+    <aura:attribute name="redirect" type="Boolean"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:handler name="init" action="{!c.navigateToSPO}" value="{!this}" />
+    <aura:if isTrue="{!v.redirect}">
+        <p>Only system admin have the permission to create/edit SPO</p>
+    </aura:if>
+    
+</aura:component>
+=======
+controller
+==========
+({
+    navigateToSPO : function(component, event, helper) {
+        //alert('h^^i'+component.get("v.recordId"));
+        var actionLI = component.get("c.getCurrentUser"); 
+        
+        actionLI.setCallback(this, function(response1) {
+            if(response1.getState() == 'SUCCESS'){
+                component.set("v.redirect",response1.getReturnValue());
+                var visible = component.get("v.redirect");
+                if(!visible){
+                    var evt = $A.get("e.force:navigateToComponent");
+                    evt.setParams({
+                        componentDef : "c:SPOModule",
+                        componentAttributes: {
+                            recordId : component.get("v.recordId")
+                        }
+                    });
+                    evt.fire();
+                }
+            }
+        });
+        $A.enqueueAction(actionLI);
+        
+    }
+})
+
+
