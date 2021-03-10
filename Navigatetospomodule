@@ -36,4 +36,26 @@ controller
     }
 })
 
+===========
+Apexclass
+=========
+public class CurrentUserController {
+    @AuraEnabled
+    public static boolean getCurrentUser() {
+        Id pId = UserInfo.getProfileId();
+        String pfname = [Select id, Name from Profile where id=:pid].Name;
+        if(pfname=='System Administrator'){
+            return false; 
+        }
+        else{
+            return true;
+        }
+        /*
+        User toReturn = [SELECT Id, FirstName, Profile.Name FROM User WHERE Id = :UserInfo.getUserId() LIMIT 1];
+        system.debug('toReturn '+toReturn);
+        system.debug('toReturn '+toReturn.Profile.Name);*/
+       
+    }
+}
+
 
