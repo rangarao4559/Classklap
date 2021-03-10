@@ -1,3 +1,4 @@
+#classklap
 <aura:component controller="SPOModuleController" implements="lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader,force:appHostable,lightning:isUrlAddressable" access="global" >
 
 
