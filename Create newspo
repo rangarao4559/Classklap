@@ -1,0 +1,1278 @@
+<aura:component controller="SPOnewRecord" implements="force:appHostable,lightning:isUrlAddressable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+    <aura:attribute name="sameasbilling" type="boolean" default="false"/>
+    <aura:attribute name="Rectypeid" type="string" />
+    <aura:attribute name="Recordtypename" type="string" />
+    <aura:attribute name="Rectypename" type="string" />
+    <aura:attribute name="Discount" type="Decimal" />
+    <aura:attribute name="DealrecordId" type="string" />
+        <aura:attribute name="productseries1" type="string" />
+            <aura:attribute name="productseries2" type="string" />
+    <aura:attribute name="Teluguchange" type="Boolean" />
+        <aura:attribute name="Hindichange" type="Boolean" />
+       <aura:attribute name="otherproduct1change" type="Boolean" />
+     <aura:attribute name="otherproduct2change" type="Boolean" />
+    <aura:attribute name="spolineitemlist" type="SPO_Line_Item__c[]"/>
+     <aura:attribute name="spotelugulineitemlist" type="SPO_Line_Item__c[]"/>
+    <aura:attribute name="spohindilineitemlist" type="SPO_Line_Item__c[]"/>
+    <aura:attribute name="spootherproduct1lineitems" type="SPO_Line_Item__c[]"/>
+        <aura:attribute name="spootherproduct2lineitems" type="SPO_Line_Item__c[]"/>
+    <aura:attribute name="spo" type="SPO__c"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:if isTrue="{!v.Recordtypename=='Original Order' || v.Recordtypename=='Additional' || v.Recordtypename=='New'  || v.Recordtypename=='Renewal Without Return'}">
+        <form>
+            <div class="slds-form-element custom-overLay slds-box slds-theme_default">
+                
+                <lightning:accordion aura:id="accordion" activeSectionName="A">
+                    <div class="slds-box">
+                        <lightning:accordionSection  name="A" label="SPO Metadata">
+                            <lightning:layout multipleRows="true">
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Account_Name__c}" label="Account" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Deal_Name__c}" label="Deal" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.SPO_Number__c}" label="SPO Number" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.Recordtypename}" label="SPO Type" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small">
+                                    <lightning:input type="date" name="orderSignDate" label="Order Sign Date" value="{!v.spo.Order_Sign_Date__c}"  aura:id="req" />
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small">
+                                    <lightning:input type="date" name="ExpectedDateofDelivery" label="Expected Date of Delivery" value="{!v.spo.Expected_Date_of_Delivery__c}"  aura:id="req" />
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Deal_Source__c}" label="Deal Source" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Academic_Year__c}" label="Academic Year" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Account_Name__c}" label="Account" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.School_Code__c}" label="School Code"   aura:id="req"/>
+                                </lightning:layoutItem>
+                                
+                                
+                            </lightning:layout>
+                        </lightning:accordionSection>
+                    </div>
+                    
+                      <div class="slds-box">
+                        <lightning:accordionSection  name="B" label="Account Data">
+                            <lightning:layout multipleRows="true">
+                                
+                                  <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                </lightning:layoutItem>
+                                  <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                   <lightning:input type="checkbox" label="Same as Billing" name="input3" checked="{!v.sameasbilling}" onchange="{!c.sameasbillingchange}" />
+                                </lightning:layoutItem>
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Account_Name__c}" label="Billing Account" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                         <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Delivery_Account_Name__c}" label="Delivery Account Name"   aura:id="req"/>
+                                </lightning:layoutItem>
+                                                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Billing_Street__c}" label="Billing Street" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                 <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Delivery_Street__c}" label="Delivery Street"   aura:id="req"/>
+                                </lightning:layoutItem>
+                                                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Billing_City__c}" label="Billing City" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                 <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Delivery_City__c}" label="Delivery City"   aura:id="req"/>
+                                </lightning:layoutItem>
+                                                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Billing_State__c}" label="Billing State" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                
+                                                                            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Delivery_State__c}" label="Delivery State"   aura:id="req"/>
+                                </lightning:layoutItem>   
+                                                                                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Billing_Country__c}" label="Billing Country" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                       <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Delivery_Country__c}" label="Delivery Country"   aura:id="req"/>
+                                </lightning:layoutItem>                                                          
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Billing_Pin_Code__c}" label="Billing Pincode" disabled="true"  aura:id="req"/>
+                                </lightning:layoutItem>
+                                          <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                                    <lightning:input type="text" value="{!v.spo.Delivery_Pin_Code__c}" label="Delivery Pin Code"   aura:id="req"/>
+                                </lightning:layoutItem>
+                                  <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+ <c:DynamicPicklistCode label="Delivery To" sObjectAPIName="SPO__c" sObjectFieldAPIName="Delivery_To__c"
+                                                                           picklistValue="{!acc.Delivery_To__c}"/>                                  </lightning:layoutItem>
+                            </lightning:layout>
+                          </lightning:accordionSection>
+                    </div>
+                    
+                    
+                     <div class="slds-box">
+                    <lightning:accordionSection  name="C" label="Order Data">  
+                         
+                        <div class="slds" style="overflow-x:auto;">
+                            <div style="width:100%" >
+                                <div class="slds-page-header">ORDER DATA <lightning:button variant="brand" label="Add" onclick="{! c.addProductLI }" />
+                                    <br/>
+                                    <div style="width:30%;">  
+                                        <lightning:input name="Discount" type="text"  maxlength="10" label="Discount" value="{!v.Discount}"  onchange="{!c.discountchange}"/> 
+                                        
+                                    </div></div>
+                                
+                                <table class="slds-table slds-table_bordered slds-table_cell-buffer"> 
+                                    
+                                    <thead>
+                                        <tr class="slds-text-title_caps">
+                                            <th scope="col">
+                                                <div class="slds-truncate">#</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Grade">Grade</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Product">Product</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Number Of Students">Number Of Students</div>
+                                            </th>
+                                            
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Print Or Cur">Print Or Cur</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Discount">Discount</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="MRP">MRP</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Total Discount">Total Discount</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Total MRP">Total MRP</div>
+                                            </th>
+                                            
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Final Price">Final Price</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Action">Action</div>
+                                            </th>
+                                        </tr>
+                                    </thead>   
+                                    <tbody>      
+                                        <aura:iteration items="{!v.spolineitemlist}" var="acc" indexVar="index">
+                                            <tr>
+                                                <td> 
+                                                    {!index + 1}
+                                                </td>
+                                                <td>
+                                                    <c:DynamicPicklistCode label="" sObjectAPIName="SPO_Line_Item__c" sObjectFieldAPIName="Grade__c"
+                                                                           picklistValue="{!acc.Grade__c}"/>                 
+                                                </td>
+                                                <td>
+                                                    <aura:if isTrue="{!acc.Product__c==''}">
+                                                   <c:customLookupforProduct objectAPIName="Product2" IconName="standard:Product"  label="Product" selectedRecord="{!acc.Product__c}" extraFilter="{!acc.Grade__c}"/>  
+                                                   <aura:set attribute="else">
+                                                  <lightning:input name="Product" type="text"  maxlength="10" label="" value="{!acc.Product__c.Name}" disabled="true"  />      
+                                                       
+                                                       </aura:set>
+                                                    </aura:if>
+                                                     </td>
+                                                <td>
+                                                    
+                                                    <aura:if isTrue="{!acc.Product__c==''}">
+                                                        <lightning:input name="Number Of Students" type="text"  maxlength="10" label="" value="{!acc.Quantity__c}" disabled="true" onchange="{!c.discountchange}" />
+                                                        <aura:set attribute="else">
+                                                            <lightning:input name="Number Of Students" type="text"  maxlength="10" label="" value="{!acc.Quantity__c}"  onchange="{!c.discountchange}" />
+                                                        </aura:set>
+                                                    </aura:if> 
+                                                    
+                                                </td>
+                                                
+                                                <td>
+                                                    <c:DynamicPicklistCode label="" sObjectAPIName="SPO_Line_Item__c" sObjectFieldAPIName="Print_or_Cur__c"
+                                                                           picklistValue="{!acc.Print_or_Cur__c}"/>                 
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Discount" type="text"  maxlength="10" label="" value="{!acc.Discount__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="MRP" type="text"  maxlength="10" label="" value="{!acc.MRP__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Total Discount" type="text"  maxlength="10" label="" value="{!acc.Total_Discount__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Total MRP" type="text"  maxlength="10" label="" value="{!acc.Total_MRP__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Final Price" type="text"  maxlength="10" label="" value="{!acc.Final_Price__c}" disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <a onclick="{!c.removeRow}" data-record="{!index}">
+                                                        <lightning:icon iconName="utility:delete" size="small" alternativeText="Delete"/>
+                                                        <span class="slds-assistive-text">Delete</span>
+                                                    </a>
+                                                </td> 
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                                <br/>
+                             
+                                <div>
+                                    <lightning:input type="checkbox" label="Telugu" name="input1" checked="{!v.spo.Telugu__c}" onchange="{!c.teluguchange}" />
+                                 <aura:if isTrue="{!v.Teluguchange}">
+                                     <div class="slds-page-header">ORDER DATA <lightning:button variant="brand" label="Add" onclick="{! c.addTeluguproduct }" /></div>
+                                                        <table class="slds-table slds-table_bordered slds-table_cell-buffer"> 
+                                    
+                                    <thead>
+                                        <tr class="slds-text-title_caps">
+                                            <th scope="col">
+                                                <div class="slds-truncate">#</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Grade">Grade</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Product">Product</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Number Of Students">Number Of Students</div>
+                                            </th>
+                                            
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Print Or Cur">Print Or Cur</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Discount">Discount</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="MRP">MRP</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Total Discount">Total Discount</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Total MRP">Total MRP</div>
+                                            </th>
+                                            
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Final Price">Final Price</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Action">Action</div>
+                                            </th>
+                                        </tr>
+                                    </thead>   
+                                    <tbody>      
+                                        <aura:iteration items="{!v.spotelugulineitemlist}" var="acc" indexVar="index">
+                                            <tr>
+                                                <td> 
+                                                    {!index + 1}
+                                                </td>
+                                                <td>
+                                                    <c:DynamicPicklistCode label="" sObjectAPIName="SPO_Line_Item__c" sObjectFieldAPIName="Grade__c"
+                                                                           picklistValue="{!acc.Grade__c}"/>                 
+                                                </td>
+                                                <td>
+                                                     <aura:if isTrue="{!acc.Product__c==''}">
+                                                         <c:CustomLookupfield objectAPIName="Product2" IconName="standard:Product"  label="Product" selectedRecord="{!acc.Product__c}" extraFilter="{!acc.Grade__c}" extraFilter2="TELUGU"/>  
+                                                         <aura:set attribute="else">
+                                                  <lightning:input name="Product" type="text"  maxlength="10" label="" value="{!acc.Product__c.Name}" disabled="true"  />      
+                                                       
+                                                       </aura:set>
+                                                    </aura:if>
+     
+                                                </td>
+                                                <td>
+                                                    
+                                                    <aura:if isTrue="{!acc.Product__c==''}">
+                                                        <lightning:input name="Number Of Students" type="text"  maxlength="10" label="" value="{!acc.Quantity__c}" disabled="true" onchange="{!c.discountchange}" />
+                                                        <aura:set attribute="else">
+                                                            <lightning:input name="Number Of Students" type="text"  maxlength="10" label="" value="{!acc.Quantity__c}"  onchange="{!c.discountchange}" />
+                                                        </aura:set>
+                                                    </aura:if> 
+                                                    
+                                                </td>
+                                                
+                                                <td>
+                                                    <c:DynamicPicklistCode label="" sObjectAPIName="SPO_Line_Item__c" sObjectFieldAPIName="Print_or_Cur__c"
+                                                                           picklistValue="{!acc.Print_or_Cur__c}"/>                 
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Discount" type="text"  maxlength="10" label="" value="{!acc.Discount__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="MRP" type="text"  maxlength="10" label="" value="{!acc.MRP__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Total Discount" type="text"  maxlength="10" label="" value="{!acc.Total_Discount__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Total MRP" type="text"  maxlength="10" label="" value="{!acc.Total_MRP__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Final Price" type="text"  maxlength="10" label="" value="{!acc.Final_Price__c}" disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <a onclick="{!c.removeteluguRow}" data-record="{!index}">
+                                                        <lightning:icon iconName="utility:delete" size="small" alternativeText="Delete"/>
+                                                        <span class="slds-assistive-text">Delete</span>
+                                                    </a>
+                                                </td> 
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                                     
+                                    </aura:if>
+                                </div>
+                                <br/>
+             
+                                <div>
+                                    <lightning:input type="checkbox" label="Hindi" name="input1" checked="{!v.spo.Hindi__c}" onchange="{!c.hindichange}" />
+                                 <aura:if isTrue="{!v.Hindichange}">
+                                     <div class="slds-page-header">ORDER DATA <lightning:button variant="brand" label="Add" onclick="{! c.addHindiproduct }" /></div>
+                                                        <table class="slds-table slds-table_bordered slds-table_cell-buffer"> 
+                                    
+                                    <thead>
+                                        <tr class="slds-text-title_caps">
+                                            <th scope="col">
+                                                <div class="slds-truncate">#</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Grade">Grade</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Product">Product</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Number Of Students">Number Of Students</div>
+                                            </th>
+                                            
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Print Or Cur">Print Or Cur</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Discount">Discount</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="MRP">MRP</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Total Discount">Total Discount</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Total MRP">Total MRP</div>
+                                            </th>
+                                            
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Final Price">Final Price</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Action">Action</div>
+                                            </th>
+                                        </tr>
+                                    </thead>   
+                                    <tbody>      
+                                        <aura:iteration items="{!v.spohindilineitemlist}" var="acc" indexVar="index">
+                                            <tr>
+                                                <td> 
+                                                    {!index + 1}
+                                                </td>
+                                                <td>
+                                                    <c:DynamicPicklistCode label="" sObjectAPIName="SPO_Line_Item__c" sObjectFieldAPIName="Grade__c"
+                                                                           picklistValue="{!acc.Grade__c}"/>                 
+                                                </td>
+                                                <td>
+                                                                           <aura:if isTrue="{!acc.Product__c==''}">
+                                                           <c:CustomLookupfield objectAPIName="Product2" IconName="standard:Product"  label="Product" selectedRecord="{!acc.Product__c}" extraFilter="{!acc.Grade__c}" extraFilter2="HINDI"/>  
+                                         <aura:set attribute="else">
+                                                  <lightning:input name="Product" type="text"  maxlength="10" label="" value="{!acc.Product__c.Name}" disabled="true"  />      
+                                                       
+                                                       </aura:set>
+                                                    </aura:if>
+                                                </td>
+                                                <td>
+                                                    
+                                                    <aura:if isTrue="{!acc.Product__c==''}">
+                                                        <lightning:input name="Number Of Students" type="text"  maxlength="10" label="" value="{!acc.Quantity__c}" disabled="true" onchange="{!c.discountchange}" />
+                                                        <aura:set attribute="else">
+                                                            <lightning:input name="Number Of Students" type="text"  maxlength="10" label="" value="{!acc.Quantity__c}"  onchange="{!c.discountchange}" />
+                                                        </aura:set>
+                                                    </aura:if> 
+                                                    
+                                                </td>
+                                                
+                                                <td>
+                                                    <c:DynamicPicklistCode label="" sObjectAPIName="SPO_Line_Item__c" sObjectFieldAPIName="Print_or_Cur__c"
+                                                                           picklistValue="{!acc.Print_or_Cur__c}"/>                 
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Discount" type="text"  maxlength="10" label="" value="{!acc.Discount__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="MRP" type="text"  maxlength="10" label="" value="{!acc.MRP__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Total Discount" type="text"  maxlength="10" label="" value="{!acc.Total_Discount__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Total MRP" type="text"  maxlength="10" label="" value="{!acc.Total_MRP__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Final Price" type="text"  maxlength="10" label="" value="{!acc.Final_Price__c}" disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <a onclick="{!c.removehindiRow}" data-record="{!index}">
+                                                        <lightning:icon iconName="utility:delete" size="small" alternativeText="Delete"/>
+                                                        <span class="slds-assistive-text">Delete</span>
+                                                    </a>
+                                                </td> 
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                                     
+                                    </aura:if>
+                                </div>
+                                
+                              <!--other product offering1 -->
+                                 <br/>
+                               
+                                <div>
+                                    <lightning:input type="checkbox" label="Other Product1" name="input1" checked="{!v.spo.Other_Product_Offering1__c}"  onchange="{!c.otherproductchange}" />
+                                 <aura:if isTrue="{!v.otherproduct1change}">
+                                     <div class="slds-page-header">ORDER DATA <lightning:button variant="brand" label="Add" onclick="{! c.addotheroffering1product }" />
+                                         <lightning:input label="Product Series" type="text" value="{!v.productseries1}" />
+                                     </div>
+                                                        <table class="slds-table slds-table_bordered slds-table_cell-buffer"> 
+                                    
+                                    <thead>
+                                        <tr class="slds-text-title_caps">
+                                            <th scope="col">
+                                                <div class="slds-truncate">#</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Grade">Grade</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Product">Product</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Number Of Students">Number Of Students</div>
+                                            </th>
+                                            
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Print Or Cur">Print Or Cur</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Discount">Discount</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="MRP">MRP</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Total Discount">Total Discount</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Total MRP">Total MRP</div>
+                                            </th>
+                                            
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Final Price">Final Price</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Action">Action</div>
+                                            </th>
+                                        </tr>
+                                    </thead>   
+                                    <tbody>      
+                                        <aura:iteration items="{!v.spootherproduct1lineitems}" var="acc" indexVar="index">
+                                            <tr>
+                                                <td> 
+                                                    {!index + 1}
+                                                </td>
+                                                <td>
+                                                    <c:DynamicPicklistCode label="" sObjectAPIName="SPO_Line_Item__c" sObjectFieldAPIName="Grade__c"
+                                                                           picklistValue="{!acc.Grade__c}"/>                 
+                                                </td>
+                                                <td>
+                                                             <aura:if isTrue="{!acc.Product__c==''}">
+                                                      <c:CustomLookupfield objectAPIName="Product2" IconName="standard:Product"  label="Product" selectedRecord="{!acc.Product__c}" extraFilter="{!acc.Grade__c}" extraFilter2="{!v.productseries1}"/>  
+                                                 <aura:set attribute="else">
+                                                  <lightning:input name="Product" type="text"  maxlength="10" label="" value="{!acc.Product__c.Name}" disabled="true"  />      
+                                                       
+                                                       </aura:set>
+                                                    </aura:if>
+                                                  </td>
+                                                <td>
+                                                    
+                                                    <aura:if isTrue="{!acc.Product__c==''}">
+                                                        <lightning:input name="Number Of Students" type="text"  maxlength="10" label="" value="{!acc.Quantity__c}" disabled="true" onchange="{!c.discountchange}" />
+                                                        <aura:set attribute="else">
+                                                            <lightning:input name="Number Of Students" type="text"  maxlength="10" label="" value="{!acc.Quantity__c}"  onchange="{!c.discountchange}" />
+                                                        </aura:set>
+                                                    </aura:if> 
+                                                    
+                                                </td>
+                                                
+                                                <td>
+                                                    <c:DynamicPicklistCode label="" sObjectAPIName="SPO_Line_Item__c" sObjectFieldAPIName="Print_or_Cur__c"
+                                                                           picklistValue="{!acc.Print_or_Cur__c}"/>                 
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Discount" type="text"  maxlength="10" label="" value="{!acc.Discount__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="MRP" type="text"  maxlength="10" label="" value="{!acc.MRP__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Total Discount" type="text"  maxlength="10" label="" value="{!acc.Total_Discount__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Total MRP" type="text"  maxlength="10" label="" value="{!acc.Total_MRP__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Final Price" type="text"  maxlength="10" label="" value="{!acc.Final_Price__c}" disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <a onclick="{!c.removeotherpd1Row}" data-record="{!index}">
+                                                        <lightning:icon iconName="utility:delete" size="small" alternativeText="Delete"/>
+                                                        <span class="slds-assistive-text">Delete</span>
+                                                    </a>
+                                                </td> 
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                                     
+                                    </aura:if>
+                                </div>
+                                <!-- other Product offering 2-->
+                                
+                                <br/>
+                          
+                                <div>
+                                    <lightning:input type="checkbox" label="Other Product2" name="input1" checked="{!v.spo.Other_Product_Offering2__c}"  onchange="{!c.otherproduct2change}" />
+                                 <aura:if isTrue="{!v.otherproduct2change}">
+                                     <div class="slds-page-header">ORDER DATA <lightning:button variant="brand" label="Add" onclick="{! c.addotheroffering2product }" />
+                                         <lightning:input label="Product Series" type="text" value="{!v.productseries2}" />
+                                     </div>
+                                                        <table class="slds-table slds-table_bordered slds-table_cell-buffer"> 
+                                    
+                                    <thead>
+                                        <tr class="slds-text-title_caps">
+                                            <th scope="col">
+                                                <div class="slds-truncate">#</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Grade">Grade</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Product">Product</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Number Of Students">Number Of Students</div>
+                                            </th>
+                                            
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Print Or Cur">Print Or Cur</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Discount">Discount</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="MRP">MRP</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Total Discount">Total Discount</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Total MRP">Total MRP</div>
+                                            </th>
+                                            
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Final Price">Final Price</div>
+                                            </th>
+                                            <th scope="col">
+                                                <div class="slds-truncate" title="Action">Action</div>
+                                            </th>
+                                        </tr>
+                                    </thead>   
+                                    <tbody>      
+                                        <aura:iteration items="{!v.spootherproduct2lineitems}" var="acc" indexVar="index">
+                                            <tr>
+                                                <td> 
+                                                    {!index + 1}
+                                                </td>
+                                                <td>
+                                                    <c:DynamicPicklistCode label="" sObjectAPIName="SPO_Line_Item__c" sObjectFieldAPIName="Grade__c"
+                                                                           picklistValue="{!acc.Grade__c}"/>                 
+                                                </td>
+                                                <td>
+                                                   <aura:if isTrue="{!acc.Product__c==''}">
+                                                    <c:CustomLookupfield objectAPIName="Product2" IconName="standard:Product"  label="Product" selectedRecord="{!acc.Product__c}" extraFilter="{!acc.Grade__c}" extraFilter2="{!v.productseries2}"/>  
+                                                   <aura:set attribute="else">
+                                                  <lightning:input name="Product" type="text"  maxlength="10" label="" value="{!acc.Product__c.Name}" disabled="true"  />      
+                                                       
+                                                       </aura:set>
+                                                    </aura:if>
+                                                    
+                                                    </td>
+                                                <td>
+                                                    
+                                                    <aura:if isTrue="{!acc.Product__c==''}">
+                                                        <lightning:input name="Number Of Students" type="text"  maxlength="10" label="" value="{!acc.Quantity__c}" disabled="true" onchange="{!c.discountchange}" />
+                                                        <aura:set attribute="else">
+                                                            <lightning:input name="Number Of Students" type="text"  maxlength="10" label="" value="{!acc.Quantity__c}"  onchange="{!c.discountchange}" />
+                                                        </aura:set>
+                                                    </aura:if> 
+                                                    
+                                                </td>
+                                                
+                                                <td>
+                                                    <c:DynamicPicklistCode label="" sObjectAPIName="SPO_Line_Item__c" sObjectFieldAPIName="Print_or_Cur__c"
+                                                                           picklistValue="{!acc.Print_or_Cur__c}"/>                 
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Discount" type="text"  maxlength="10" label="" value="{!acc.Discount__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="MRP" type="text"  maxlength="10" label="" value="{!acc.MRP__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Total Discount" type="text"  maxlength="10" label="" value="{!acc.Total_Discount__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Total MRP" type="text"  maxlength="10" label="" value="{!acc.Total_MRP__c}"  disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <lightning:input name="Final Price" type="text"  maxlength="10" label="" value="{!acc.Final_Price__c}" disabled="true" />
+                                                </td>
+                                                <td>
+                                                    <a onclick="{!c.removeotherpd2Row}" data-record="{!index}">
+                                                        <lightning:icon iconName="utility:delete" size="small" alternativeText="Delete"/>
+                                                        <span class="slds-assistive-text">Delete</span>
+                                                    </a>
+                                                </td> 
+                                            </tr>
+                                        </aura:iteration>
+                                    </tbody>
+                                </table>
+                                     
+                                    </aura:if>
+                                </div> 
+                                
+                                
+                            </div>
+                        </div>  
+                        
+                        <br/>
+                        <div>
+                             <lightning:layout multipleRows="true">
+                                <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                         <lightning:input type="checkbox" label="Pack" name="input1" value="{!v.spo.Pack__c}"   />
+                                </lightning:layoutItem>
+                                                    <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                         <lightning:input type="checkbox" label="NEP Pack" name="input1" value="{!v.spo.NEP_Pack__c}"   />
+                                </lightning:layoutItem>
+                                             <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                         <lightning:input type="checkbox" label="Supplementry Pack" name="input1" value="{!v.spo.Supplementry_Pack__c}"   />
+                                </lightning:layoutItem>
+                            </lightning:layout>
+                                 
+                        
+                        </div>
+                     
+                    </lightning:accordionSection>  
+                            </div>
+                    <br/>
+                    
+                     <div class="slds-box">
+                        <lightning:accordionSection  name="D" label="Examination Term">
+                              <lightning:layout multipleRows="true">
+                             
+                                  <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                      <lightning:input type="checkbox" label="Examination 2 Term" name="input1" value="{!v.spo.Examination_2_Term__c}"   />
+                                   
+                                  </lightning:layoutItem>
+                                                          <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="6" largeDeviceSize="6" padding="around-small"> 
+                      <lightning:input type="checkbox" label="Examination 3 Part" name="input1" value="{!v.spo.Examination_3_Part__c}"   />
+                                   
+                                  </lightning:layoutItem>
+                            </lightning:layout>
+                         </lightning:accordionSection>
+                    </div>
+                    
+                    
+  <div class="slds-box">
+                        <lightning:accordionSection  name="E" label="Others Offering">
+                              <lightning:layout multipleRows="true">
+                                  <c:DynamicMultiSelectpicklist labelName="Scheme Code" objectapiName="SPO__c" fieldapiName="Scheme_Code__c"  requiredname="false" selectedGenreList="{!v.spo.Scheme_Code__c}" />
+                            </lightning:layout>
+                        </lightning:accordionSection>
+                    </div>
+                   
+                </lightning:accordion>
+            </div>
+            
+            <br/>
+            <br/>
+         <!--   <div>
+                <lightning:accordionSection  name="c" label="Ord"> 
+                    <lightning:input type="checkbox" label="Telugu" name="input1" checked="{!v.spo.Telugu__c}" onchange="{!c.teluguchange}" />
+                </lightning:accordionSection>
+            </div>-->
+        </form>
+        
+    </aura:if>
+    <aura:if isTrue="{!v.Recordtypename=='Merit Ninja' || v.spo.RecordType.Name=='Merit Ninja'}">
+        <h1>Merit Ninja</h1>
+    </aura:if>
+    <aura:if isTrue="{!v.Recordtypename=='Avanti' || v.spo.RecordType.Name=='Avanti' }">
+        <h1>Avvvanti</h1>
+    </aura:if>
+    
+</aura:component>
+({
+	doInit : function(component, event, helper) {
+		  var action=  component.get('c.getdealrecord');  
+        action.setParams({ recordId : component.get("v.DealrecordId") });
+        action.setCallback(this,function(response)   
+        {
+            var state=response.getState();            
+        if(state==='SUCCESS')
+        {
+            component.set('v.spo',response.getReturnValue());           
+        }
+            else if (state === "ERROR") {    
+var errors = response.getError();              
+if (errors) {
+if (errors[0] && errors[0].message) {
+alert(errors[0].message );
+        }
+}
+            }                    
+        });
+  $A.enqueueAction(action);
+	},
+    handleCreateSPO : function(component, event, helper) {
+        var action=  component.get('c.savespo');  
+        action.setParams({ sp : component.get("v.spo") ,
+                          recordtypename : component.get("v.Recordtypename")});
+        action.setCallback(this,function(response)   
+        {
+                  var state=response.getState();          
+        if(state==='SUCCESS')
+        {
+          var navEvt = $A.get("e.force:navigateToSObject");
+    navEvt.setParams({
+      "recordId": response.getReturnValue().Id,
+      "slideDevName": "detail"
+    });
+    navEvt.fire();
+        } else if (state === "ERROR") {     
+var errors = response.getError();               
+if (errors) {
+if (errors[0] && errors[0].message) {
+alert(errors[0].message );
+        }
+}
+        }
+            
+        });
+         $A.enqueueAction(action);
+        
+    },
+    addProductLI: function(component, event, helper) {
+        helper.addProductRecord(component, event, helper);
+    },
+     addTeluguproduct: function(component, event, helper) {
+        helper.addteluguProductRecord(component, event, helper);
+    },
+    addHindiproduct : function(component, event, helper) {
+        helper.addhindiProductRecord(component, event, helper);
+    },
+    addotheroffering1product : function(component, event, helper) {
+        helper.addotheroffering1ProductRecord(component, event, helper);
+    },
+      addotheroffering2product : function(component, event, helper) {
+        helper.addotheroffering2ProductRecord(component, event, helper);
+    },
+    
+     discountchange : function(component, event, helper) {
+         var spoli=component.get('v.spolineitemlist');
+         var teluguspoli=component.get('v.spotelugulineitemlist');
+          var hindispoli=component.get('v.spohindilineitemlist');
+         var other1=component.get('v.spootherproduct1lineitems');
+          var other2=component.get('v.spootherproduct2lineitems')
+         if(spoli !='' && spoli !=null){
+      var spolineitem=component.get('v.spolineitemlist');
+         var dis=component.get('v.Discount');
+          for(var temp in spolineitem){
+             spolineitem[temp].Discount__c=dis;
+               spolineitem[temp].MRP__c=spolineitem[temp].Product__c.Product_MRP__c;
+              var totalprice=(spolineitem[temp].MRP__c)*(spolineitem[temp].Quantity__c);
+              spolineitem[temp].Total_MRP__c=totalprice;
+              var finalps=totalprice*((100-dis)/100);
+               spolineitem[temp].Final_Price__c=finalps;
+              spolineitem[temp].Total_Discount__c=totalprice-finalps;
+              
+          }
+              component.set('v.spolineitemlist',spolineitem);
+         }
+         
+         if(teluguspoli !='' && teluguspoli !=null){
+      var spolineitem=component.get('v.spotelugulineitemlist');
+         var dis=component.get('v.Discount');
+          for(var temp in spolineitem){
+             spolineitem[temp].Discount__c=dis;
+               spolineitem[temp].MRP__c=spolineitem[temp].Product__c.Product_MRP__c;
+              var totalprice=(spolineitem[temp].MRP__c)*(spolineitem[temp].Quantity__c);
+              spolineitem[temp].Total_MRP__c=totalprice;
+              var finalps=totalprice*((100-dis)/100);
+               spolineitem[temp].Final_Price__c=finalps;
+              spolineitem[temp].Total_Discount__c=totalprice-finalps;
+              
+          }
+              component.set('v.spotelugulineitemlist',spolineitem);
+         }
+         if(hindispoli !='' && hindispoli !=null){
+      var spolineitem=component.get('v.spohindilineitemlist');
+         var dis=component.get('v.Discount');
+          for(var temp in spolineitem){
+             spolineitem[temp].Discount__c=dis;
+               spolineitem[temp].MRP__c=spolineitem[temp].Product__c.Product_MRP__c;
+              var totalprice=(spolineitem[temp].MRP__c)*(spolineitem[temp].Quantity__c);
+              spolineitem[temp].Total_MRP__c=totalprice;
+              var finalps=totalprice*((100-dis)/100);
+               spolineitem[temp].Final_Price__c=finalps;
+              spolineitem[temp].Total_Discount__c=totalprice-finalps;
+              
+          }
+              component.set('v.spohindilineitemlist',spolineitem);
+         }
+         
+         
+         if(other1 !='' && other1 !=null){
+      var spolineitem=component.get('v.spootherproduct1lineitems');
+         var dis=component.get('v.Discount');
+          for(var temp in spolineitem){
+             spolineitem[temp].Discount__c=dis;
+               spolineitem[temp].MRP__c=spolineitem[temp].Product__c.Product_MRP__c;
+              var totalprice=(spolineitem[temp].MRP__c)*(spolineitem[temp].Quantity__c);
+              spolineitem[temp].Total_MRP__c=totalprice;
+              var finalps=totalprice*((100-dis)/100);
+               spolineitem[temp].Final_Price__c=finalps;
+              spolineitem[temp].Total_Discount__c=totalprice-finalps;
+              
+          }
+              component.set('v.spootherproduct1lineitems',spolineitem);
+         }
+         
+         if(other2 !='' && other2 !=null){
+      var spolineitem=component.get('v.spootherproduct2lineitems');
+         var dis=component.get('v.Discount');
+          for(var temp in spolineitem){
+             spolineitem[temp].Discount__c=dis;
+               spolineitem[temp].MRP__c=spolineitem[temp].Product__c.Product_MRP__c;
+              var totalprice=(spolineitem[temp].MRP__c)*(spolineitem[temp].Quantity__c);
+              spolineitem[temp].Total_MRP__c=totalprice;
+              var finalps=totalprice*((100-dis)/100);
+               spolineitem[temp].Final_Price__c=finalps;
+              spolineitem[temp].Total_Discount__c=totalprice-finalps;
+              
+          }
+              component.set('v.spootherproduct2lineitems',spolineitem);
+         }
+        
+         
+     },
+    removeRow : function(component, event, helper) {
+          var spolineitem = component.get("v.spolineitemlist");
+        //Get the target object
+        var selectedItem = event.currentTarget;
+        //Get the selected item index
+        var index = selectedItem.dataset.record;
+        spolineitem.splice(index, 1);
+        component.set("v.spolineitemlist", spolineitem);
+        
+    },
+    removeteluguRow  : function(component, event, helper) {
+          var spolineitem = component.get("v.spotelugulineitemlist");
+        //Get the target object
+        var selectedItem = event.currentTarget;
+        //Get the selected item index
+        var index = selectedItem.dataset.record;
+        spolineitem.splice(index, 1);
+        component.set("v.spotelugulineitemlist", spolineitem);
+        
+    },
+    removehindiRow  : function(component, event, helper) {
+          var spolineitem = component.get("v.spohindilineitemlist");
+        //Get the target object
+        var selectedItem = event.currentTarget;
+        //Get the selected item index
+        var index = selectedItem.dataset.record;
+        spolineitem.splice(index, 1);
+        component.set("v.spohindilineitemlist", spolineitem);
+        
+    },
+    removeotherpd1Row: function(component, event, helper) {
+          var spolineitem = component.get("v.spootherproduct1lineitems");
+        //Get the target object
+        var selectedItem = event.currentTarget;
+        //Get the selected item index
+        var index = selectedItem.dataset.record;
+        spolineitem.splice(index, 1);
+        component.set("v.spootherproduct1lineitems", spolineitem);
+        
+    },
+    removeotherpd2Row : function(component, event, helper) {
+          var spolineitem = component.get("v.spootherproduct2lineitems");
+        //Get the target object
+        var selectedItem = event.currentTarget;
+        //Get the selected item index
+        var index = selectedItem.dataset.record;
+        spolineitem.splice(index, 1);
+        component.set("v.spootherproduct2lineitems", spolineitem);
+        
+    },
+    
+    teluguchange : function(component, event, helper) {
+        
+var tel=component.get('v.Teluguchange');
+component.set('v.Teluguchange',event.getSource().get("v.checked"));  
+        var spotelugu=component.get('v.spotelugulineitemlist');
+        component.set('v.spotelugulineitemlist',[]);
+        
+        
+        
+    },
+    hindichange: function(component, event, helper) {
+        
+var tel=component.get('v.Hindichange');
+component.set('v.Hindichange',event.getSource().get("v.checked"));  
+        var spotelugu=component.get('v.spohindilineitemlist');
+        component.set('v.spohindilineitemlist',[]);
+        
+        
+        
+    },
+    otherproductchange :function(component, event, helper) {
+        
+var tel=component.get('v.otherproduct1change');
+component.set('v.otherproduct1change',event.getSource().get("v.checked"));  
+        var spotelugu=component.get('v.spootherproduct1lineitems');
+        component.set('v.spootherproduct1lineitems',[]);                      
+    },
+     otherproduct2change :function(component, event, helper) {
+        
+var tel=component.get('v.otherproduct2change');
+component.set('v.otherproduct2change',event.getSource().get("v.checked"));  
+        var spotelugu=component.get('v.spootherproduct2lineitems');
+        component.set('v.spootherproduct2lineitems',[]);                      
+    },
+    sameasbillingchange :function(component, event, helper) {
+       
+        var tel=component.get('v.sameasbilling');
+        var spoo=component.get('v.spo');
+        if(event.getSource().get("v.checked")==true){
+             
+            spoo.Delivery_Account_Name__c=spoo.Account_Name__c;
+            spoo.Delivery_Street__c=spoo.Billing_Street__c;
+            spoo.Delivery_City__c=spoo.Billing_City__c;
+            spoo.Delivery_State__c=spoo.Billing_State__c;
+            spoo.Delivery_Country__c=spoo.Billing_Country__c;
+            spoo.Delivery_Pin_Code__c=spoo.Billing_Pin_Code__c;
+          
+            
+        }
+        if(event.getSource().get("v.checked")==false){
+ 
+            spoo.Delivery_Account_Name__c=null;
+            spoo.Delivery_Street__c=null;
+            spoo.Delivery_City__c=null;
+            spoo.Delivery_State__c=null;
+            spoo.Delivery_Country__c=null;
+            spoo.Delivery_Pin_Code__c=null;            
+        }
+          component.set('v.spo',spoo);
+component.set('v.sameasbilling',event.getSource().get("v.checked"));  
+    }
+    
+})
+
+====================================================
+helper
+=====================================================
+({
+	addProductRecord : function(component,event,helper) {
+		  var accountList = component.get("v.spolineitemlist");
+        //Add New Account Record
+        accountList.push({
+            'sobjectType': 'SPO_Line_Item__c',
+            'Grade__c': '',
+            'Quantity__c': '',
+            'Product__c': '',
+            'Discount__c':'',
+            'MRP__c':'',
+            'Final_Price__c':'',
+            'Total_MRP__c':'',
+            'Total_Discount__c':''
+        });
+        component.set("v.spolineitemlist", accountList);
+	},
+    addteluguProductRecord : function(component,event,helper) {
+		  var accountList = component.get("v.spotelugulineitemlist");
+        //Add New Account Record
+        accountList.push({
+            'sobjectType': 'SPO_Line_Item__c',
+            'Grade__c': '',
+            'Quantity__c': '',
+            'Product__c': '',
+            'Discount__c':'',
+            'MRP__c':'',
+            'Final_Price__c':'',
+            'Total_MRP__c':'',
+            'Total_Discount__c':''
+        });
+        component.set("v.spotelugulineitemlist", accountList);
+	},
+     addhindiProductRecord : function(component,event,helper) {
+		  var accountList = component.get("v.spohindilineitemlist");
+        //Add New Account Record
+        accountList.push({
+            'sobjectType': 'SPO_Line_Item__c',
+            'Grade__c': '',
+            'Quantity__c': '',
+            'Product__c': '',
+            'Discount__c':'',
+            'MRP__c':'',
+            'Final_Price__c':'',
+            'Total_MRP__c':'',
+            'Total_Discount__c':''
+        });
+        component.set("v.spohindilineitemlist", accountList);
+	},
+    addotheroffering1ProductRecord : function(component,event,helper) {
+		  var accountList = component.get("v.spootherproduct1lineitems");
+        //Add New Account Record
+        accountList.push({
+            'sobjectType': 'SPO_Line_Item__c',
+            'Grade__c': '',
+            'Quantity__c': '',
+            'Product__c': '',
+            'Discount__c':'',
+            'MRP__c':'',
+            'Final_Price__c':'',
+            'Total_MRP__c':'',
+            'Total_Discount__c':''
+        });
+        component.set("v.spootherproduct1lineitems", accountList);
+	},
+    
+    addotheroffering2ProductRecord : function(component,event,helper) {
+		  var accountList = component.get("v.spootherproduct2lineitems");
+        //Add New Account Record
+        accountList.push({
+            'sobjectType': 'SPO_Line_Item__c',
+            'Grade__c': '',
+            'Quantity__c': '',
+            'Product__c': '',
+            'Discount__c':'',
+            'MRP__c':'',
+            'Final_Price__c':'',
+            'Total_MRP__c':'',
+            'Total_Discount__c':''
+        });
+        component.set("v.spootherproduct2lineitems", accountList);
+	},
+})
+========================================
+apex class
+==================================================
+public class SPOnewRecord {
+    @AuraEnabled
+    public static Deal__c getdealrecord(string recId){
+        Deal__c dl=[select Id,name,Account__c,Account__r.Name,Academic_Year__c,Deal_Type__c,Account__r.School_Code__c from Deal__c where Id=:recId];
+        return dl;
+    }
+      @AuraEnabled
+    Public static spo__c savespo(spo__c sp,string recordtypename){
+         Id recordTypeId;
+        if(recordtypename!=null){
+        recordTypeId = Schema.SObjectType.spo__c.getRecordTypeInfosByName().get(recordtypename).getRecordTypeId(); 
+             sp.RecordTypeId=recordTypeId;
+        }
+           
+        upsert sp;
+        return Sp;
+    }
+    
+     @AuraEnabled
+    Public static SPO__c getdealrecord(id recordId){
+        //String DealPrefix = Deal__c.SObjectType.getDescribe().getKeyPrefix();
+       // if(string.valueOf(recordId).startsWith(DealPrefix)){
+            Deal__c objectDeal = [select id,Name,Deal_Type__c,Account__c,Account__r.City__c,Account__r.Country__c,Account__r.Postal_Code1__c,Account__r.Street__c,Account__r.State__c,Account__r.Name,Account__r.School_Code__c,Account__r.Billing_Street__c,Account__r.Billing_State__c,Academic_Year__c,School_Code__c,
+                                  Account__r.Billing_Country__c,Account__r.Billing_City__c,Account__r.Billing_Postal_Code__c,Account__r.Other_City_1__c,Account__r.Other_City_2__c,
+                                  Account__r.Other_City_3__c,Account__r.Other_Country_2__c,Account__r.Other_Country_1__c,Account__r.Other_Country_3__c,Account__r.Other_Postal_code_2__c,
+                                  Account__r.Other_Postal_Code_1__c,Account__r.Other_Postal_Code_3__c,Account__r.Other_State_2__c,Account__r.Other_State_1__c,Account__r.Other_State_3__c,
+                                  Account__r.other_Street_1__c,Account__r.Signatory_Phone_Number__c,Account__r.Signatory_Email__c,Account__r.Service_Phone_Number__c,Account__r.Service_Email__c,Account__r.Other_Street_2__c,Account__r.Other_Street_3__c,
+                                  Account__r.Shipping_City__c,Account__r.Shipping_Country__c,Account__r.Shipping_Postal_Code__c,Account__r.Signatory_Name__c,
+                                  Channel_Partner_Name__r.Signatory_Phone_Number__c,Channel_Partner_Name__r.Signatory_Email__c,Channel_Partner_Name__r.Service_Phone_Number__c,Channel_Partner_Name__r.Service_Email__c,
+                                  Account__r.Shipping_State__c,Account__r.CP_discount_percentage__c,Account__r.Shipping_Street__c,Deal_Source__c,Discount_offered__c,Channel_Partner_Name__c,
+                                  Channel_Partner_Name__r.Billing_Street__c,Channel_Partner_Name__r.Billing_State__c,Channel_Partner_Name__r.CP_discount_percentage__c,
+                                  Channel_Partner_Name__r.Name,Channel_Partner_Name__r.School_Code__c,Channel_Partner_Name__r.Channel_Partner_Code__c,Account__r.Channel_Partner_Code__c,
+                                  Channel_Partner_Name__r.Billing_Country__c,Channel_Partner_Name__r.Billing_City__c,Channel_Partner_Name__r.Billing_Postal_Code__c,
+                                  (SELECT Academic_Year__c,Account__c,Advance_Amount__c,Advance_Collected_From__c,Advance_Date__c,Advance_Mode__c,
+                                   Advance_Reference_Number__c,Billing_City__c,	Billing_Country__c,Billing_Pin_Code__c,Billing_State__c,Billing_Street__c,
+                                   Client_Confirmation_Status__c,CP_Discount__c,CreatedById,CreatedDate,Deal__c,
+                                   Delivery_City__c,Delivery_Pin_Code__c,Delivery_State__c,	Delivery_Country__c,Delivery_Street__c,Expected_Date_of_Delivery__c,
+                                   FIN_Verified_Reject_Attachment__c,FIN_Verified_Reject_Finance__c,FIN_Verified_Reject_Other_Finance__c,
+                                   FIN_Verified_Reject_Payment__c,Id,IsDeleted,LastActivityDate,LastModifiedById,LastModifiedDate,
+                                   Name,OPS_Verified_Reject_Billing__c,OPS_Verified_Reject_Delivery__c,
+                                   OPS_Verified_Reject_Discount__c,OPS_Verified_Reject_Finance__c,OPS_Verified_Reject_Other_Finance__c,
+                                   OPS_Verified_Reject_Other_Service__c,OPS_Verified_Reject_SPO_Metadata__c,Order_Sign_Date__c,OwnerId,
+                                   Payment_Note_10__c,Payment_Note_50__c,Payment_Note_70__c,Payment_Note_75__c,Payment_Note_100__c,Scheme_Code__c,
+                                   School_Discount__c,Service_Email_ID__c,Service_Phone_Number__c,Signatory_Email_ID__c,Signatory_Phone_Number__c,
+                                   SPO_Number__c,SPO_Type__c,Status__c,OPs_Approved_date__c,Finance_Approved_Date__c,SystemModstamp,OTP_Entered__c,OTP_Sent__c,Service_Name__c,Signatory_Name__c,
+                                   Billing_Account_Name__c,Billing_Account__c,Delivery_To__c,Delivery_Account__c,Delivery_Account_Name__c,Billing_Account_Code__c,Delivery_Account_Code__c from SPOs__r) 
+                                  from Deal__c where Id =: recordId limit 1];
+     
+            SPO__c spoRecord = new SPO__c( Account__c  = objectDeal.Account__c,
+                                          School_Discount__c=0,
+                                          Academic_Year__c = objectDeal.Academic_Year__c,
+                                          Deal__c=objectDeal.id,
+                                          School_Code__c=objectDeal.Account__r.School_Code__c,
+                                          Account_Name__c=objectDeal.Account__r.Name,
+                                          Deal_Name__c=objectDeal.Name,
+                                          Deal_Source__c=objectDeal.Deal_Type__c,
+                                          Billing_Account_Name__c=objectDeal.Account__r.Name,
+                                          Billing_Street__c=objectDeal.Account__r.Street__c,
+                                          Billing_City__c=objectDeal.Account__r.City__c,
+                                          Billing_State__c=objectDeal.Account__r.State__c,
+                                          Billing_Country__c=objectDeal.Account__r.Country__c,
+                                          Billing_Pin_Code__c=objectDeal.Account__r.Postal_Code1__c,
+                                          Signatory_Name__c	=objectDeal.Account__r.Signatory_Name__c,
+                                          Signatory_Email_ID__c=objectDeal.Account__r.Signatory_Email__c,
+                                          Signatory_Phone_Number__c=objectDeal.Account__r.Signatory_Phone_Number__c
+                                          
+                                          
+                                          
+                                         );                         
+            return spoRecord;           
+      //  }
+        // }
+       /* else{
+            return [SELECT RecordtypeId,Recordtype.Name,Academic_Year__c,Account__c,Advance_Amount__c,Advance_Collected_From__c,
+                    Advance_Date__c,Advance_Mode__c,Advance_Reference_Number__c,Billing_City__c,
+                    Billing_Country__c,Billing_Pin_Code__c,Billing_State__c,Billing_Street__c,
+                    Client_Confirmation_Status__c,CP_Discount__c,CreatedById,CreatedDate,Deal_Source__c,
+                    Deal__c,Delivery_City__c,Delivery_Country__c,Delivery_Pin_Code__c,
+                    Delivery_State__c,Delivery_Street__c,Expected_Date_of_Delivery__c,
+                    FIN_Attach_Rejection_Notes__c,FIN_Finance_Rejection_Notes__c,FIN_Other_Finance_Rejection_Notes__c,
+                    FIN_Payment_Rejection_Notes__c,FIN_Verified_Reject_Attachment__c,FIN_Verified_Reject_Finance__c,
+                    FIN_Verified_Reject_Other_Finance__c,FIN_Verified_Reject_Payment__c,Id,IsDeleted,LastActivityDate,
+                    LastModifiedById,LastModifiedDate,Name,OPS_Billing_Rejection_Notes__c,
+                    OPS_Delivery_Rejection_Notes__c,OPS_Discount_Rejection_Notes__c,OPS_Finance_Rejection_Notes__c,
+                    OPS_Metadata_Rejection_Notes__c,OPS_Other_Finance_Rejection_Notes__c,OPS_Other_Offering_Rejection_Notes__c,
+                    OPS_Verified_Reject_Billing__c,OPS_Verified_Reject_Delivery__c,OPS_Verified_Reject_Discount__c,
+                    OPS_Verified_Reject_Finance__c,OPS_Verified_Reject_Other_Finance__c,OPS_Verified_Reject_Other_Service__c,
+                    OPS_Verified_Reject_SPO_Metadata__c,Order_Sign_Date__c,OwnerId,Payment_Note_10__c,Payment_Note_50__c,
+                    Payment_Note_70__c,Payment_Note_75__c,Payment_Note_100__c,Scheme_Code__c,School_Code__c,School_Discount__c,
+                    Service_Email_ID__c,Service_Phone_Number__c,Signatory_Email_ID__c,Signatory_Phone_Number__c,Service_Name__c,Signatory_Name__c,SPO_Number__c,
+                    SPO_Type__c,Status__c,Finance_Approved_Date__c,OPs_Approved_date__c,SystemModstamp,Total_Discount_Value__c,Total_DV_After_Discount__c,
+                    Total_DV_before_Discount__c,OTP_Entered__c,OTP_Sent__c,Billing_Account_Name__c,Delivery_Account_Name__c,
+                    Billing_Account_Code__c,Delivery_Account_Code__c,Billing_Account__c,Delivery_Account__c,Delivery_To__c FROM SPO__c where id =: recordId];
+        }
+    }*/
+    }
+    
+     @AuraEnabled
+    public static List<spodatawrapper> getAllspodata (string recordid) {
+        list<spodatawrapper> stulist=new list<spodatawrapper>();
+        
+     spo__c spo=[SELECT RecordtypeId,Recordtype.Name,Academic_Year__c,Account__c,Account__r.Name,Advance_Amount__c,Advance_Collected_From__c,
+                    Advance_Date__c,Advance_Mode__c,Advance_Reference_Number__c,Billing_City__c,
+                    Billing_Country__c,Billing_Pin_Code__c,Billing_State__c,Billing_Street__c,
+                    Client_Confirmation_Status__c,CP_Discount__c,CreatedById,CreatedDate,Deal_Source__c,Deal__r.name,
+                    Deal__c,Delivery_City__c,Delivery_Country__c,Delivery_Pin_Code__c,
+                    Delivery_State__c,Delivery_Street__c,Expected_Date_of_Delivery__c,
+                    FIN_Attach_Rejection_Notes__c,FIN_Finance_Rejection_Notes__c,FIN_Other_Finance_Rejection_Notes__c,
+                    FIN_Payment_Rejection_Notes__c,FIN_Verified_Reject_Attachment__c,FIN_Verified_Reject_Finance__c,
+                    FIN_Verified_Reject_Other_Finance__c,FIN_Verified_Reject_Payment__c,Id,IsDeleted,LastActivityDate,
+                    LastModifiedById,LastModifiedDate,Name,OPS_Billing_Rejection_Notes__c,
+                    OPS_Delivery_Rejection_Notes__c,OPS_Discount_Rejection_Notes__c,OPS_Finance_Rejection_Notes__c,
+                    OPS_Metadata_Rejection_Notes__c,OPS_Other_Finance_Rejection_Notes__c,OPS_Other_Offering_Rejection_Notes__c,
+                    OPS_Verified_Reject_Billing__c,OPS_Verified_Reject_Delivery__c,OPS_Verified_Reject_Discount__c,
+                    OPS_Verified_Reject_Finance__c,OPS_Verified_Reject_Other_Finance__c,OPS_Verified_Reject_Other_Service__c,
+                    OPS_Verified_Reject_SPO_Metadata__c,Order_Sign_Date__c,OwnerId,Payment_Note_10__c,Payment_Note_50__c,
+                    Payment_Note_70__c,Payment_Note_75__c,Payment_Note_100__c,Scheme_Code__c,School_Code__c,School_Discount__c,
+                    Service_Email_ID__c,Service_Phone_Number__c,Signatory_Email_ID__c,Signatory_Phone_Number__c,Service_Name__c,Signatory_Name__c,SPO_Number__c,
+                    SPO_Type__c,Status__c,Finance_Approved_Date__c,OPs_Approved_date__c,SystemModstamp,Total_Discount_Value__c,Total_DV_After_Discount__c,
+                    Total_DV_before_Discount__c,OTP_Entered__c,OTP_Sent__c,Billing_Account_Name__c,Delivery_Account_Name__c,
+                    Billing_Account_Code__c,Delivery_Account_Code__c,Billing_Account__c,Delivery_Account__c,
+                 Delivery_To__c FROM SPO__c where id =: recordId];
+        list<SPO_Line_Item__c> spoline=[SELECT Id, Name, RecordTypeId, SPO__c, Cancellation__c, Class_Group__c, Exam_Code__c, Discount__c, Examination_Term__c,
+                                     Grade__c, Final_Price__c, MRP__c, Payment_Terms__c, Product_Code__c, Product_lookup__c, Product__c, Quantity__c,
+                                     Revised_Payment_Term__c, School_Payment_Terms__c, Service_Code__c, Service__c, Standard_Term__c, Product_Name__c, 
+                                     Product__r.Name,Total_Amount__c, Overall_Percentage__c, Product_Name1__c,
+                                     Total_MRP__c, Total_Discount__c, Print_or_Cur__c, Product_Id__c FROM SPO_Line_Item__c where SPO__c=:spo.Id ];
+     
+        
+        spodatawrapper spdata= new spodatawrapper();
+        spdata.sp=spo;
+        spdata.spline=spoline;
+        stulist.add(spdata);
+        return stulist;
+        
+    }
+     public class spodatawrapper{ 
+        @AuraEnabled
+        public SPO__c sp {get;set;}
+        @AuraEnabled
+        public list<SPO_Line_Item__c> spline {get; set;}
+       // @AuraEnabled  
+        //public hed__Program_Enrollment__c pro {get; set;}
+        //
+     }
+    @AuraEnabled
+    public static string save(list<string> deletespo,SPO__c spo,list<SPO_Line_Item__c> splineitems){
+       
+        if(deletespo!=null){
+            list<SPO_Line_Item__c> spl=[select id from SPO_Line_Item__c where Id=:deletespo];
+            delete spl;
+        }
+        upsert spo;
+        
+        for(SPO_Line_Item__c sp:splineitems){
+            if(sp.Id==null){
+          sp.SPO__c=spo.Id;
+            }
+        }
+        upsert splineitems;
+        return spo.Id;
+    }
+}
+=======================================================================
+
+
+=======================================================
+Controller
+================================================================
